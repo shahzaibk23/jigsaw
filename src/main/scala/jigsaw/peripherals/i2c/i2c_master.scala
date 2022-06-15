@@ -1,5 +1,3 @@
-package jigsaw.peripherals.i2c
-
 import chisel3._
 import chisel3.util._
 
@@ -10,7 +8,7 @@ class i2c_master extends Module{
         val start = Input(Bool())
         val addr = Input(UInt(7.W))
         val data = Input(UInt(8.W))
-        // val read_write = Input(Bool())
+        val read_write = Input(Bool())
         val i2c_sda_in = Input(Bool())
 
         val i2c_sda = Output(Bool())
@@ -93,7 +91,7 @@ class i2c_master extends Module{
             }
 
             is(rw_state){
-                io.i2c_sda := 0.U
+                io.i2c_sda := io.read_write
                 io.ready := 0.B
                 io.stop := 0.B
                 state := wack_state
