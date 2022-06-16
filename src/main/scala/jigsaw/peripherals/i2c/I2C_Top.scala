@@ -1,6 +1,6 @@
 import chisel3._
 import chisel3.util._
-package jigsaw.peripherals.
+package jigsaw.peripherals.i2c
 
 class I2C_Top extends Module{
     val io = IO(new Bundle{
