@@ -1,7 +1,7 @@
+package jigsaw.peripherals.i2c
 import chisel3._
 import chisel3.util._
 import caravan.bus.common.{BusConfig, AbstrRequest, AbstrResponse}
-package jigsaw.peripherals.i2c
 
 class i2c(val req:AbstrRequest, val rsp:AbstrResponse)(implicit val config:BusConfig) extends Module {
     val io = IO(new Bundle{
