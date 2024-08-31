@@ -3,8 +3,9 @@ package jigsaw.peripherals.timer
 import chisel3._
 import chisel3.util._
 import caravan.bus.common.{AbstrRequest, AbstrResponse}
+import jigsaw.peripherals.common.{AbstractDevice, AbstractDeviceIO}
 
-class Timer_IO[A <: AbstrRequest, B <: AbstrResponse] (gen: A, gen1: B) extends Bundle{
+class TimerIO[A <: AbstrRequest, B <: AbstrResponse] (gen: A, gen1: B) extends AbstractDeviceIO[A,B]{
 
     // bus interconnect interfaces
     val req = Flipped(Decoupled(gen))
@@ -16,8 +17,8 @@ class Timer_IO[A <: AbstrRequest, B <: AbstrResponse] (gen: A, gen1: B) extends 
 
 
 // timer in chisel
-class Timer[A <: AbstrRequest, B <: AbstrResponse] (gen: A, gen1: B) extends Module{
-    val io = IO(new Timer_IO(gen,gen1))
+class Timer[A <: AbstrRequest, B <: AbstrResponse] (gen: A, gen1: B) extends AbstractDevice{
+    val io = IO(new TimerIO(gen,gen1))
 
     // registers
     val TimerReg   = RegInit(0.U(32.W)) // RO 0x0
