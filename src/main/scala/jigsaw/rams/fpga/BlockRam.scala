@@ -59,7 +59,7 @@ object BlockRam {
 }
 
 class BlockRamWithoutMaskingIO[A <: AbstrRequest, B <: AbstrResponse]
-                            (gen: A, gen1: B, programFile: Option[String]) extends AbstractDeviceIO{
+                            (gen: A, gen1: B) extends AbstractDeviceIO{
   val req = Flipped(Decoupled(gen))
   val rsp = Decoupled(gen1)
 }
