@@ -6,9 +6,10 @@ import chisel3.experimental.ChiselEnum
 import chisel3.stage.ChiselStage
 import chisel3.util.{Cat, Decoupled, Fill, MuxCase, Enum}
 import jigsaw.peripherals.spiflash._
+import jigsaw.peripherals.common.{AbstractDevice, AbstractDeviceIO}
 
-class Spi_IO[A <: AbstrRequest, B <: AbstrResponse]
-          (gen: A, gen1: B) extends Bundle{
+class SpiIO[A <: AbstrRequest, B <: AbstrResponse]
+          (gen: A, gen1: B) extends AbstractDeviceIO[A,B]{
 
     // bus interconnect interfaces
     val req = Flipped(Decoupled(gen))
@@ -22,9 +23,9 @@ class Spi_IO[A <: AbstrRequest, B <: AbstrResponse]
 }
 
 class SpiFlash[A <: AbstrRequest, B <: AbstrResponse]
-          (gen: A, gen1: B) extends Module{
+          (gen: A, gen1: B) extends AbstractDevice{
 
-    val io = IO(new Spi_IO(gen, gen1))
+    val io = IO(new SpiIO(gen, gen1))
     val ControlReg = RegInit("b1100000".U(32.W)) // addr 0x0
     val TxDataReg    = RegInit(0.U(32.W)) // addr 0x4
     val TxDataValidReg = RegInit(0.B)
