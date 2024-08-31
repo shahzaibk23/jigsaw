@@ -23,15 +23,15 @@ class uartHarness(implicit val config: WishboneConfig) extends Module {
   })
   val hostAdapter = Module(new WishboneHost())
   val deviceAdapter = Module(new WishboneDevice())
-  val uart_wrapper = Module(new uart(new WBRequest(), new WBResponse()))
+  val uart_wrapper = Module(new Uart(new WBRequest(), new WBResponse()))
 
   hostAdapter.io.reqIn <> io.req
   io.rsp <> hostAdapter.io.rspOut
   hostAdapter.io.wbMasterTransmitter <> deviceAdapter.io.wbMasterReceiver
   hostAdapter.io.wbSlaveReceiver <> deviceAdapter.io.wbSlaveTransmitter
 
-  uart_wrapper.io.request <> deviceAdapter.io.reqOut
-  uart_wrapper.io.response <> deviceAdapter.io.rspIn
+  uart_wrapper.io.req <> deviceAdapter.io.reqOut
+  uart_wrapper.io.rsp <> deviceAdapter.io.rspIn
 
     uart_wrapper.io.cio_uart_rx_i := io.cio_uart_rx_i
     io.cio_uart_tx_o := uart_wrapper.io.cio_uart_tx_o
@@ -62,15 +62,15 @@ class uartHarness_TL(implicit val config: TilelinkConfig) extends Module {
   })
   val hostAdapter = Module(new TilelinkHost())
   val deviceAdapter = Module(new TilelinkDevice())
-  val uart_wrapper = Module(new uart(new TLRequest(), new TLResponse()))
+  val uart_wrapper = Module(new Uart(new TLRequest(), new TLResponse()))
 
   hostAdapter.io.reqIn <> io.req
   io.rsp <> hostAdapter.io.rspOut
   hostAdapter.io.tlMasterTransmitter <> deviceAdapter.io.tlMasterReceiver
   hostAdapter.io.tlSlaveReceiver <> deviceAdapter.io.tlSlaveTransmitter
 
-  uart_wrapper.io.request <> deviceAdapter.io.reqOut
-  uart_wrapper.io.response <> deviceAdapter.io.rspIn
+  uart_wrapper.io.req <> deviceAdapter.io.reqOut
+  uart_wrapper.io.rsp <> deviceAdapter.io.rspIn
 
     uart_wrapper.io.cio_uart_rx_i := io.cio_uart_rx_i
     io.cio_uart_tx_o := uart_wrapper.io.cio_uart_tx_o
