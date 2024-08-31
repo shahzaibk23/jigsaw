@@ -4,18 +4,23 @@ import caravan.bus.wishbone.{WBRequest, WBResponse, WishboneConfig}
 import chisel3._
 import chisel3.stage.ChiselStage
 import chisel3.util.{Cat, Decoupled}
-import jigsaw.peripherals.common.IntrHardware
+import jigsaw.peripherals.common.{IntrHardware, AbstractDevice, AbstractDeviceIO}
+
+// TODO: Update gen, gen1 to more meaningful names
+
+class GpioIO[A <: AbstrRequest, B <: AbstrResponse]
+          (gen: A, gen1: B) extends AbstractDeviceIO[A,B]{
+  val req = Flipped(Decoupled(gen))
+  val rsp = Decoupled(gen1)
+  val cio_gpio_i = Input(UInt(32.W))
+  val cio_gpio_o = Output(UInt(32.W))
+  val cio_gpio_en_o = Output(UInt(32.W))
+  val intr_gpio_o = Output(UInt(32.W))
+}
 
 class Gpio[A <: AbstrRequest, B <: AbstrResponse]
           (gen: A, gen1: B) extends Module {
-  val io = IO(new Bundle {
-    val req = Flipped(Decoupled(gen))
-    val rsp = Decoupled(gen1)
-    val cio_gpio_i = Input(UInt(32.W))
-    val cio_gpio_o = Output(UInt(32.W))
-    val cio_gpio_en_o = Output(UInt(32.W))
-    val intr_gpio_o = Output(UInt(32.W))
-  })
+  val io = IO(new GpioIO(gen, gen1))
 
   val reg2hw = Wire(new GPIOReg2Hw(DW = 32))   // Outputs
   val hw2reg = Wire(new GPIOHw2Reg(DW = 32))  // Inputs
