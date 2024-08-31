@@ -7,12 +7,14 @@ import chisel3._
 import chisel3.util.experimental.loadMemoryFromFile
 import chisel3.util.{Cat, Decoupled}
 
+import jigsaw.peripherals.common.{AbstractDevice, AbstractDeviceIO}
+
 object BlockRam {
 
   def createNonMaskableRAM[T <: BusConfig]
                           (programFile: Option[String],
                            bus: T,
-                           rows: Int) = {
+                           rows: Int): AbstractDevice = {
     bus match {
       case bus: WishboneConfig => {
         implicit val config = bus.asInstanceOf[WishboneConfig]
@@ -34,7 +36,7 @@ object BlockRam {
 
   def createMaskableRAM[T <: BusConfig]
                        (bus: T,
-                        rows: Int) = {
+                        rows: Int): AbstractDevice = {
     bus match {
       case bus: WishboneConfig => {
         implicit val config = bus.asInstanceOf[WishboneConfig]
@@ -56,13 +58,16 @@ object BlockRam {
 
 }
 
-class BlockRamWithoutMasking[A <: AbstrRequest, B <: AbstrResponse]
-                            (gen: A, gen1: B, programFile: Option[String], rows: Int) extends Module {
+class BlockRamWithoutMaskingIO[A <: AbstrRequest, B <: AbstrResponse]
+                            (gen: A, gen1: B, programFile: Option[String]) extends AbstractDeviceIO{
+  val req = Flipped(Decoupled(gen))
+  val rsp = Decoupled(gen1)
+}
 
-  val io = IO(new Bundle {
-    val req = Flipped(Decoupled(gen))
-    val rsp = Decoupled(gen1)
-  })
+class BlockRamWithoutMasking[A <: AbstrRequest, B <: AbstrResponse]
+                            (gen: A, gen1: B, programFile: Option[String], rows: Int) extends AbstractDevice{
+
+  val io = IO(new BlockRamWithoutMaskingIO(gen,gen1))
 
   val addrMisaligned = Wire(Bool())
   val addrOutOfBounds = Wire(Bool())
@@ -100,14 +105,16 @@ class BlockRamWithoutMasking[A <: AbstrRequest, B <: AbstrResponse]
   }
 }
 
+class BlockRamWithMaskingIO [A <: AbstrRequest, B <: AbstrResponse]
+                         (gen: A, gen1: B) extends AbstractDeviceIO[A,B]{
+  val req = Flipped(Decoupled(gen))
+  val rsp = Decoupled(gen1)
+}
+
 class BlockRamWithMasking[A <: AbstrRequest, B <: AbstrResponse]
-                         (gen: A, gen1: B, rows: Int) extends Module {
+                         (gen: A, gen1: B, rows: Int) extends AbstractDevice {
 
-
-  val io = IO(new Bundle {
-    val req = Flipped(Decoupled(gen))
-    val rsp = Decoupled(gen1)
-  })
+  val io = IO(new BlockRamWithMaskingIO(gen,gen1))
 
   // holds the data in byte vectors to be written in memory
   val wdata = Wire(Vec(4, UInt(8.W)))
