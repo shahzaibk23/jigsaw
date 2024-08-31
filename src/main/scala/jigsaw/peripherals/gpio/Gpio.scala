@@ -19,7 +19,7 @@ class GpioIO[A <: AbstrRequest, B <: AbstrResponse]
 }
 
 class Gpio[A <: AbstrRequest, B <: AbstrResponse]
-          (gen: A, gen1: B) extends Module {
+          (gen: A, gen1: B) extends AbstractDevice {
   val io = IO(new GpioIO(gen, gen1))
 
   val reg2hw = Wire(new GPIOReg2Hw(DW = 32))   // Outputs
