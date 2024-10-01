@@ -17,7 +17,7 @@ class TimerIO[A <: AbstrRequest, B <: AbstrResponse] (gen: A, gen1: B) extends A
 
 
 // timer in chisel
-class Timer[A <: AbstrRequest, B <: AbstrResponse] (gen: A, gen1: B) extends AbstractDevice{
+class Timer[A <: AbstrRequest, B <: AbstrResponse] (gen: A, gen1: B) extends AbstractDevice[A,B]{
     val io = IO(new TimerIO(gen,gen1))
 
     // registers

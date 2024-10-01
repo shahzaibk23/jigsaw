@@ -17,7 +17,7 @@ class I2cIO[A <: AbstrRequest, B <: AbstrResponse]
 }
 
 class I2c[A <: AbstrRequest, B <: AbstrResponse]
-        (gen:A, gen1:B) extends AbstractDevice {
+        (gen:A, gen1:B) extends AbstractDevice[A,B] {
     val io = IO(new I2cIO(gen, gen1))
 
     io.req.ready := 1.B

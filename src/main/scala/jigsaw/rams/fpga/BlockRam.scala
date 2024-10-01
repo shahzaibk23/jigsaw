@@ -11,61 +11,61 @@ import jigsaw.peripherals.common.{AbstractDevice, AbstractDeviceIO}
 
 object BlockRam {
 
-  def createNonMaskableRAM[T <: BusConfig]
-                          (programFile: Option[String],
-                           bus: T,
-                           rows: Int): AbstractDevice = {
-    bus match {
-      case bus: WishboneConfig => {
-        implicit val config = bus.asInstanceOf[WishboneConfig]
-        new BlockRamWithoutMasking(new WBRequest(), new WBResponse(), programFile, rows)
-      }
+//   def createNonMaskableRAM[T <: BusConfig]
+//                           (programFile: Option[String],
+//                            bus: T,
+//                            rows: Int): AbstractDevice = {
+//     bus match {
+//       case bus: WishboneConfig => {
+//         implicit val config = bus.asInstanceOf[WishboneConfig]
+//         new BlockRamWithoutMasking(new WBRequest(), new WBResponse(), programFile, rows)
+//       }
 
-      case bus: NativeConfig => {
-        implicit val config = bus.asInstanceOf[NativeConfig]
-        new BlockRamWithoutMasking(new NativeRequest(), new NativeResponse(), programFile, rows)
-      }
+//       case bus: NativeConfig => {
+//         implicit val config = bus.asInstanceOf[NativeConfig]
+//         new BlockRamWithoutMasking(new NativeRequest(), new NativeResponse(), programFile, rows)
+//       }
 
-      case bus: TilelinkConfig => {
-        implicit val config = bus.asInstanceOf[TilelinkConfig]
-        new BlockRamWithoutMasking(new TLRequest(), new TLResponse(), programFile, rows)
-      }
+//       case bus: TilelinkConfig => {
+//         implicit val config = bus.asInstanceOf[TilelinkConfig]
+//         new BlockRamWithoutMasking(new TLRequest(), new TLResponse(), programFile, rows)
+//       }
 
-    }
-  }
+//     }
+//   }
 
-  def createMaskableRAM[T <: BusConfig]
-                       (bus: T,
-                        rows: Int): AbstractDevice = {
-    bus match {
-      case bus: WishboneConfig => {
-        implicit val config = bus.asInstanceOf[WishboneConfig]
-        new BlockRamWithMasking(new WBRequest(), new WBResponse(), rows)
-      }
+//   def createMaskableRAM[T <: BusConfig]
+//                        (bus: T,
+//                         rows: Int): AbstractDevice = {
+//     bus match {
+//       case bus: WishboneConfig => {
+//         implicit val config = bus.asInstanceOf[WishboneConfig]
+//         new BlockRamWithMasking(new WBRequest(), new WBResponse(), rows)
+//       }
 
-      case bus: NativeConfig => {
-        implicit val config = bus.asInstanceOf[NativeConfig]
-        new BlockRamWithMasking(new NativeRequest(), new NativeResponse(), rows)
-      }
+//       case bus: NativeConfig => {
+//         implicit val config = bus.asInstanceOf[NativeConfig]
+//         new BlockRamWithMasking(new NativeRequest(), new NativeResponse(), rows)
+//       }
 
-      case bus:TilelinkConfig => {
-        implicit val config = bus.asInstanceOf[TilelinkConfig]
-        new BlockRamWithMasking(new TLRequest(), new TLResponse(), rows)
-      }
+//       case bus:TilelinkConfig => {
+//         implicit val config = bus.asInstanceOf[TilelinkConfig]
+//         new BlockRamWithMasking(new TLRequest(), new TLResponse(), rows)
+//       }
 
-    }
-  }
+//     }
+//   }
 
 }
 
 class BlockRamWithoutMaskingIO[A <: AbstrRequest, B <: AbstrResponse]
-                            (gen: A, gen1: B) extends AbstractDeviceIO{
+                            (gen: A, gen1: B) extends AbstractDeviceIO[A,B]{
   val req = Flipped(Decoupled(gen))
   val rsp = Decoupled(gen1)
 }
 
 class BlockRamWithoutMasking[A <: AbstrRequest, B <: AbstrResponse]
-                            (gen: A, gen1: B, programFile: Option[String], rows: Int) extends AbstractDevice{
+                            (gen: A, gen1: B, programFile: Option[String], rows: Int) extends AbstractDevice[A,B]{
 
   val io = IO(new BlockRamWithoutMaskingIO(gen,gen1))
 
@@ -112,7 +112,7 @@ class BlockRamWithMaskingIO [A <: AbstrRequest, B <: AbstrResponse]
 }
 
 class BlockRamWithMasking[A <: AbstrRequest, B <: AbstrResponse]
-                         (gen: A, gen1: B, rows: Int) extends AbstractDevice {
+                         (gen: A, gen1: B, rows: Int) extends AbstractDevice[A,B] {
 
   val io = IO(new BlockRamWithMaskingIO(gen,gen1))
 

@@ -23,7 +23,7 @@ class SpiIO[A <: AbstrRequest, B <: AbstrResponse]
 }
 
 class Spi[A <: AbstrRequest, B <: AbstrResponse]
-          (gen: A, gen1: B) extends AbstractDevice{
+          (gen: A, gen1: B) extends AbstractDevice[A,B]{
 
     val io = IO(new SpiIO(gen, gen1))
     val ControlReg = RegInit("b1100000".U(32.W)) // addr 0x0

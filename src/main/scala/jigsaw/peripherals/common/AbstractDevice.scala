@@ -10,4 +10,6 @@ abstract class AbstractDeviceIO[A <: AbstrRequest, B <: AbstrResponse] extends B
     val rsp: DecoupledIO[B]
 }
 
-abstract class AbstractDevice extends Module
+abstract class AbstractDevice[A <: AbstrRequest, B <: AbstrResponse] extends Module{
+    val io: AbstractDeviceIO[A,B]
+}

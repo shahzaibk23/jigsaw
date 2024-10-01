@@ -15,7 +15,7 @@ class UartIO[A <: AbstrRequest, B <: AbstrResponse](gen: A, gen1: B) extends Abs
     val cio_uart_intr_tx_o = Output(Bool())
     //val valid_check = Output(Bool())
 }
-class Uart[A <: AbstrRequest, B <: AbstrResponse](gen: A, gen1: B) extends AbstractDevice {
+class Uart[A <: AbstrRequest, B <: AbstrResponse](gen: A, gen1: B) extends AbstractDevice[A,B] {
     val io = IO(new UartIO(gen, gen1))
 
     io.req.ready := 1.B
